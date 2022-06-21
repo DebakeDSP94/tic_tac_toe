@@ -18,20 +18,21 @@ class Board
     puts " #{@board[6]} | #{@board[7]} | #{@board[8]} "
   end
 
-  def validate_input(square, player)
-    return 'invalid' unless (1..9).include?(square)
+  def validate_input(player_choice, player)
+    return 'invalid' unless (1..9).include?(player_choice)
 
-    if @board[square - 1] == 'X' || @board[square - 1] == 'O'
+    if @board[player_choice - 1] == 'X' || @board[player_choice - 1] == 'O'
       'taken'
     else
-      @board[square - 1] = player.sign
-      player.moves.push(square)
+      @board[player_choice - 1] = player.sign
+      player.moves.push(player_choice)
+      player.moves.sort!
       'valid'
     end
   end
 
   def check_for_tie
-    over = true if @board.intersection([1, 2, 3, 4, 5, 6, 7, 8, 9]).empty?
-    over
+    tied = true if @board.intersection([1, 2, 3, 4, 5, 6, 7, 8, 9]).empty?
+    tied
   end
 end

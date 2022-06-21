@@ -5,7 +5,7 @@ require_relative 'outputs'
 # class Game - handles initializing the game and player turns
 class Game
   include Outputs
-  attr_accessor :board, :player1, :player2, :validated, :player_turn, :over, :win
+  attr_accessor :board, :player1, :player2, :validated, :player_turn, :tied, :win
   attr_reader :win_sets
 
   def initialize
@@ -14,7 +14,7 @@ class Game
     @player2 = nil
     @validated = nil
     @player_turn = 'player_1'
-    @over = false
+    @tied = false
     @win = false
     @win_sets = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7],
                  [2, 5, 8], [3, 6, 9], [3, 5, 7], [1, 5, 9]]
@@ -35,9 +35,9 @@ class Game
   end
 
   def play_turn(player1, player2)
-    @over = board.check_for_tie
-    draw if @over == true
-    return if @over
+    @tied = board.check_for_tie
+    draw if @tied == true
+    return if @tied
 
     if @player_turn == 'player_1'
       player1_turn(player1)
@@ -49,21 +49,22 @@ class Game
 
   def player1_turn(player1)
     pick_square1(player1)
-    square = gets.chomp.to_i
-    @validated = board.validate_input(square, player1)
+    player_choice = gets.chomp.to_i
+    @validated = board.validate_input(player_choice, player1)
     msg_out(validated)
     @player_turn = 'player_2' if @validated == 'valid'
   end
 
   def player2_turn(player2)
     pick_square2(player2)
-    square = gets.chomp.to_i
-    @validated = board.validate_input(square, player2)
+    player_choice = gets.chomp.to_i
+    @validated = board.validate_input(player_choice, player2)
     msg_out(validated)
     @player_turn = 'player_1' if @validated == 'valid'
   end
 
   def msg_out(validated)
+    system 'clear' || 'cls'
     board.display_board
     square_taken if validated == 'taken'
     invalid_input if validated == 'invalid'
@@ -72,10 +73,10 @@ class Game
 
   def check_for_win(player1, player2, win_sets)
     win_sets.each do |set|
-      if @player1.moves.sort.intersection(set) == set
+      if @player1.moves.intersection(set) == set
         player1_win
         @win = true
-      elsif @player2.moves.sort.intersection(set) == set
+      elsif @player2.moves.intersection(set) == set
         player2_win
         @win = true
       end
