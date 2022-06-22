@@ -11,7 +11,7 @@ class Player
   end
 
   def assign_name
-    puts "#{name} What is your name?"
+    $stdout.puts "#{name} What is your name?"
     @name = gets.chomp
   end
 end

@@ -49,7 +49,7 @@ class Game
 
   def player1_turn(player1)
     pick_square1(player1)
-    player_choice = gets.chomp.to_i
+    player_choice = $stdin.gets.chomp.to_i
     @validated = board.validate_input(player_choice, player1)
     msg_out(validated)
     @player_turn = 'player_2' if @validated == 'valid'
@@ -57,7 +57,7 @@ class Game
 
   def player2_turn(player2)
     pick_square2(player2)
-    player_choice = gets.chomp.to_i
+    player_choice = $stdin.gets.chomp.to_i
     @validated = board.validate_input(player_choice, player2)
     msg_out(validated)
     @player_turn = 'player_1' if @validated == 'valid'

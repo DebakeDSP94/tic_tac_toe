@@ -13,7 +13,7 @@ end
 
 def want_another_game
   p 'Would you like to play again?'
-  play_new_game if gets.chomp.downcase == 'y'
+  play_new_game if $stdin.gets.chomp.downcase == 'y'
   p 'Thank you for playing.'
 end
 play_new_game
