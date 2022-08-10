@@ -9,9 +9,4 @@ class Player
     @sign = sign
     @moves = moves
   end
-
-  def assign_name
-    $stdout.puts "#{name} What is your name?"
-    @name = gets.chomp
-  end
 end
