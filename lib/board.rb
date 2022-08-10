@@ -6,8 +6,8 @@ require_relative 'game'
 class Board
   attr_accessor :board
 
-  def initialize
-    @board = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  def initialize(board = [1, 2, 3, 4, 5, 6, 7, 8, 9])
+    @board = board
   end
 
   def display_board
@@ -32,7 +32,6 @@ class Board
   end
 
   def check_for_tie
-    tied = true if @board.intersection([1, 2, 3, 4, 5, 6, 7, 8, 9]).empty?
-    tied
+    true if @board.intersection([1, 2, 3, 4, 5, 6, 7, 8, 9]).empty?
   end
 end

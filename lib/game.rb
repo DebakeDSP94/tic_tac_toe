@@ -10,57 +10,57 @@ class Game
 
   def initialize
     @board = Board.new
-    @player1 = nil
-    @player2 = nil
+    @player1 = Player.new('player 1', 'X')
+    @player2 = Player.new('player 2', 'O')
     @validated = nil
     @player_turn = 'player_1'
-    @tied = false
-    @win = false
     @win_sets = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7],
                  [2, 5, 8], [3, 6, 9], [3, 5, 7], [1, 5, 9]]
   end
 
   def play
     make_players
+    system 'clear' || 'cls'
     board.display_board
-    play_turn(player1, player2)
+    start_a_turn(player1, player2)
   end
 
   def make_players
-    @player1 = Player.new('player 1', 'X')
-    @player2 = Player.new('player 2', 'O')
-
-    player1.assign_name
-    player2.assign_name
+    assign_name(player1)
+    assign_name(player2)
   end
 
-  def play_turn(player1, player2)
-    @tied = board.check_for_tie
-    draw if @tied == true
-    return if @tied
+  def assign_name(player)
+    $stdout.puts "#{player.name} What is your name?"
+    player.name = gets.chomp
+  end
+
+  def start_a_turn(player1, player2)
+    if board.check_for_tie
+      draw
+      return
+    end
 
     if @player_turn == 'player_1'
-      player1_turn(player1)
+      play_a_turn(player1)
     else
-      player2_turn(player2)
+      play_a_turn(player2)
     end
-    check_for_win(player1, player2, win_sets)
+    check_for_win(player1, player2)
   end
 
-  def player1_turn(player1)
-    pick_square1(player1)
+  def play_a_turn(player)
+    pick_square(player)
     player_choice = $stdin.gets.chomp.to_i
-    @validated = board.validate_input(player_choice, player1)
+    @validated = board.validate_input(player_choice, player)
     msg_out(validated)
-    @player_turn = 'player_2' if @validated == 'valid'
-  end
+    return unless @validated == 'valid'
 
-  def player2_turn(player2)
-    pick_square2(player2)
-    player_choice = $stdin.gets.chomp.to_i
-    @validated = board.validate_input(player_choice, player2)
-    msg_out(validated)
-    @player_turn = 'player_1' if @validated == 'valid'
+    @player_turn = if @player_turn == 'player_1'
+                     'player_2'
+                   else
+                     'player_1'
+                   end
   end
 
   def msg_out(validated)
@@ -71,16 +71,20 @@ class Game
     good_choice if validated == 'valid'
   end
 
-  def check_for_win(player1, player2, win_sets)
-    win_sets.each do |set|
-      if @player1.moves.intersection(set) == set
-        player1_win
-        @win = true
-      elsif @player2.moves.intersection(set) == set
-        player2_win
-        @win = true
+  def check_for_win(player1, player2)
+    game_over = false
+    [player1, player2].each do |player|
+      win_sets.each do |set|
+        if check_for_winning_set(player, set)
+          player_win(player)
+          game_over = true
+        end
       end
     end
-    play_turn(player1, player2) unless @win == true
+    start_a_turn(player1, player2) unless game_over
+  end
+
+  def check_for_winning_set(player, set)
+    player.moves.intersection(set) == set
   end
 end
